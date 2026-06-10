@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv
+tarkwa_rainfall_env/
+rainfall_app/
+*.log
+.DS_Store

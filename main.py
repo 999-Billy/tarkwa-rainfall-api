@@ -38,7 +38,7 @@ except Exception as e:
     print(f"XGBoost load error: {e}")
 
 # Load historical data
-DATA_PATH = os.path.join(BASE_DIR, '..', 'data', 'tarkwa_rainfall_clean.csv')
+DATA_PATH = os.path.join(BASE_DIR, 'tarkwa_rainfall_clean.csv')
 df_history = pd.read_csv(DATA_PATH, index_col='Date', parse_dates=True)
 df_history.index.freq = 'MS'
 
