@@ -13,13 +13,29 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELS_DIR = os.path.join(BASE_DIR, 'models')
 
 # Load SARIMA
+# Load SARIMA - retrain at startup for compatibility
 try:
-    from statsmodels.tsa.statespace.sarimax import SARIMAXResults
-    sarima_model = SARIMAXResults.load(os.path.join(MODELS_DIR, 'sarima_model.pkl'))
-    print("SARIMA model loaded.")
+    from statsmodels.tsa.statespace.sarimax import SARIMAX
+    _df_train = pd.read_csv(
+        os.path.join(BASE_DIR, 'tarkwa_rainfall_clean.csv'),
+        index_col='Date', parse_dates=True
+    )
+    _df_train.index.freq = 'MS'
+    _rainfall = _df_train['Monthly_Rainfall']
+    _split = int(len(_rainfall) * 0.8)
+    _train = _rainfall[:_split]
+    _sarima = SARIMAX(
+        _train,
+        order=(1, 0, 0),
+        seasonal_order=(1, 0, 2, 12),
+        enforce_stationarity=False,
+        enforce_invertibility=False
+    )
+    sarima_model = _sarima.fit(disp=False)
+    print("SARIMA model trained and loaded.")
 except Exception as e:
     sarima_model = None
-    print(f"SARIMA load error: {e}")
+    print(f"SARIMA training error: {e}")
 
 # Load GAM
 try:
